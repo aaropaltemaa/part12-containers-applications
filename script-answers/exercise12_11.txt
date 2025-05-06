@@ -1,0 +1,13 @@
+aarop@DESKTOP-QF5LFC4:/mnt/c/Users/aarop/palautukset2/part12/part12-containers-applications/todo-app/todo-backend$ docker exec -it todo-backend-redis-1 bash
+127.0.0.1:6379> KEYS *
+1) "added_todos"
+127.0.0.1:6379> SET added_todos 9001
+OK
+127.0.0.1:6379> GET added_todos
+"9002"
+127.0.0.1:6379> DEL added_todos
+(integer) 1
+127.0.0.1:6379> GET added_todos
+(nil)
+127.0.0.1:6379> GET added_todos
+"1"
