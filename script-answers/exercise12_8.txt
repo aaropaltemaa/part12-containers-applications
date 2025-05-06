@@ -1,0 +1,69 @@
+aarop@DESKTOP-QF5LFC4:/mnt/c/Users/aarop/palautukset2/part12/part12-containers-applications/todo-app/todo-backend$ docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                     NAMES
+4678285c00d9   mongo     "docker-entrypoint.s…"   54 minutes ago   Up 14 minutes   0.0.0.0:3456->27017/tcp   todo-backend-mongo-1
+aarop@DESKTOP-QF5LFC4:/mnt/c/Users/aarop/palautukset2/part12/part12-containers-applications/todo-app/todo-backend$ docker exec -it todo-backend-mongo-1 bash
+root@4678285c00d9:/# mongosh -u the_username -p the_password --authenticationDatabase the_database
+Current Mongosh Log ID: 6819d8d650f87dcb57d861df
+Connecting to:          mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=the_database&appName=mongosh+2.5.0
+Using MongoDB:          8.0.9
+Using Mongosh:          2.5.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+test> show dbs
+the_database  72.00 KiB
+test> use the_database
+switched to db the_database
+the_database> show collections
+todos
+the_database> db.todos.find({})
+[
+  {
+    _id: ObjectId('6819cc11bfb294dd8cd861e0'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6819cc11bfb294dd8cd861e1'),
+    text: 'Learn about containers',
+    done: false
+  },
+  {
+    _id: ObjectId('6819d77e10d7bcc1d8d861e0'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
+the_database> db.todos.insertOne({
+...   text: "Increase the number of tools in my tool belt",
+...   done: false
+... })
+{
+  acknowledged: true,
+  insertedId: ObjectId('6819d90e50f87dcb57d861e0')
+}
+the_database>
+
+the_database> db.todos.find({})
+[
+  {
+    _id: ObjectId('6819cc11bfb294dd8cd861e0'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6819cc11bfb294dd8cd861e1'),
+    text: 'Learn about containers',
+    done: false
+  },
+  {
+    _id: ObjectId('6819d77e10d7bcc1d8d861e0'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  },
+  {
+    _id: ObjectId('6819d90e50f87dcb57d861e0'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
