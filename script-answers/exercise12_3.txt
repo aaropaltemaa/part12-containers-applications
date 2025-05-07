@@ -1,0 +1,2 @@
+aarop@DESKTOP-QF5LFC4:~$ docker start -i lucid_panini
+root@1aecea5a4a5a:/# nano /usr/src/app/index.js

@@ -1,0 +1,4 @@
+aarop@DESKTOP-QF5LFC4:~$ docker run -it ubuntu bash
+root@1aecea5a4a5a:/# mkdir -p /usr/src/app
+root@1aecea5a4a5a:/# nano /usr/src/app/index.js
+root@1aecea5a4a5a:/# exit
