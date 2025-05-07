@@ -1,0 +1,16 @@
+services:
+  todo-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./public:/usr/src/app/public
+    ports:
+      - "3000:3000" # Expose port 3000 for the frontend app
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    working_dir: /usr/src/app
+    stdin_open: true # Keeps stdin open for interactive use
+    tty: true # Allows terminal to be used interactively

@@ -1,49 +1,62 @@
-const express = require('express');
-const { Todo } = require('../mongo')
+const express = require("express");
+const { Todo } = require("../mongo");
 const router = express.Router();
+const { getAsync, setAsync } = require("../redis");
 
-/* GET todos listing. */
-router.get('/', async (_, res) => {
-  const todos = await Todo.find({})
+/* GET all todos */
+router.get("/", async (_, res) => {
+  const todos = await Todo.find({});
   res.send(todos);
 });
 
-/* POST todo to listing. */
-router.post('/', async (req, res) => {
+/* POST new todo */
+router.post("/", async (req, res) => {
   const todo = await Todo.create({
     text: req.body.text,
-    done: false
-  })
+    done: false,
+  });
+
+  // Increment Redis counter
+  const addedCount = Number(await getAsync("added_todos")) || 0;
+  await setAsync("added_todos", addedCount + 1);
+
   res.send(todo);
 });
 
-const singleRouter = express.Router();
+const singleRouter = express.Router({ mergeParams: true });
 
 const findByIdMiddleware = async (req, res, next) => {
-  const { id } = req.params
-  req.todo = await Todo.findById(id)
-  if (!req.todo) return res.sendStatus(404)
+  const { id } = req.params;
+  try {
+    const todo = await Todo.findById(id);
+    if (!todo) return res.sendStatus(404);
+    req.todo = todo;
+    next();
+  } catch (err) {
+    return res.sendStatus(400); // bad ID format
+  }
+};
 
-  next()
-}
+/* GET single todo */
+singleRouter.get("/", async (req, res) => {
+  res.send(req.todo);
+});
 
-/* DELETE todo. */
-singleRouter.delete('/', async (req, res) => {
-  await req.todo.delete()  
+/* PUT update todo */
+singleRouter.put("/", async (req, res) => {
+  const { text, done } = req.body;
+  if (text !== undefined) req.todo.text = text;
+  if (done !== undefined) req.todo.done = done;
+  const updated = await req.todo.save();
+  res.send(updated);
+});
+
+/* DELETE todo */
+singleRouter.delete("/", async (req, res) => {
+  await req.todo.deleteOne();
   res.sendStatus(200);
 });
 
-/* GET todo. */
-singleRouter.get('/', async (req, res) => {
-  res.sendStatus(405); // Implement this
-});
-
-/* PUT todo. */
-singleRouter.put('/', async (req, res) => {
-  res.sendStatus(405); // Implement this
-});
-
-router.use('/:id', findByIdMiddleware, singleRouter)
-
+router.use("/:id", findByIdMiddleware, singleRouter);
 
 module.exports = router;
